@@ -9,15 +9,19 @@ export class AuthController {
   async register(
     @Body() registerRequest: { name: string; password: string; email: string },
   ) {
-    return await this.authService.registerUser(registerRequest);
+    try {
+      return await this.authService.registerUser(registerRequest);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Post('confirm')
   async confirm(@Body() confirmRequest: { email: string; code: string }) {
     try {
       return await this.authService.confirmUser(confirmRequest);
-    } catch (e) {
-      throw new BadRequestException(e.message);
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -27,8 +31,8 @@ export class AuthController {
   ) {
     try {
       return await this.authService.authenticateUser(authenticateRequest);
-    } catch (e) {
-      throw new BadRequestException(e.message);
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 }
