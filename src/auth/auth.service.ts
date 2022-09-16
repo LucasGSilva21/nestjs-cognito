@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   CognitoUserPool,
   CognitoUserAttribute,
+  CognitoUser,
 } from 'amazon-cognito-identity-js';
 import { AuthConfig } from './auth.config';
 
@@ -42,6 +43,26 @@ export class AuthService {
           }
         },
       );
+    });
+  }
+
+  confirmUser(confirm: { email: string; code: string }) {
+    const { email, code } = confirm;
+    const userData = {
+      Username: email,
+      Pool: this.userPool,
+    };
+    const cognitoUser = new CognitoUser(userData);
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.confirmRegistration(code, true, (err, result) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
     });
   }
 }
