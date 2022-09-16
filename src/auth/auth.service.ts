@@ -3,6 +3,7 @@ import {
   CognitoUserPool,
   CognitoUserAttribute,
   CognitoUser,
+  AuthenticationDetails,
 } from 'amazon-cognito-identity-js';
 import { AuthConfig } from './auth.config';
 
@@ -62,6 +63,32 @@ export class AuthService {
         } else {
           resolve(result);
         }
+      });
+    });
+  }
+
+  authenticateUser(user: { email: string; password: string }) {
+    const { email, password } = user;
+
+    const authenticationDetails = new AuthenticationDetails({
+      Username: email,
+      Password: password,
+    });
+    const userData = {
+      Username: email,
+      Pool: this.userPool,
+    };
+
+    const cognitoUser = new CognitoUser(userData);
+
+    return new Promise((resolve, reject) => {
+      return cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: (result) => {
+          resolve(result);
+        },
+        onFailure: (err) => {
+          reject(err);
+        },
       });
     });
   }

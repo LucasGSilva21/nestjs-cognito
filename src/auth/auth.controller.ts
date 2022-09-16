@@ -20,4 +20,15 @@ export class AuthController {
       throw new BadRequestException(e.message);
     }
   }
+
+  @Post('login')
+  async login(
+    @Body() authenticateRequest: { email: string; password: string },
+  ) {
+    try {
+      return await this.authService.authenticateUser(authenticateRequest);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
+  }
 }
